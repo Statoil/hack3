@@ -123,9 +123,9 @@ public final class ViewfinderView extends View {
         }
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-        count++;
+       
          
-        frame.top +=  count % 50;
+  
         
         
         // Draw the exterior (i.e. outside the framing rect) darkened
