@@ -25,60 +25,15 @@ public class TextResultProcessor extends ResultProcessor<ParsedResult> {
     }
 
     @Override
-    public List<CardPresenter> getCardResults() {
-    	
-    	
-        List<CardPresenter> cardPresenters = new ArrayList<CardPresenter>();
+    public Intent getCardResults() {
 
         ParsedResult parsedResult = getParsedResult();
         
-        
         String codeValue = parsedResult.getDisplayResult();
 
-        int id = Integer.parseInt(codeValue);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(codeValue));
 
-        if (id == 5) {
-        
-        	CardPresenter cardPresenter = new CardPresenter();
-            cardPresenter.setText("Show Temp & Pressure").setFooter(codeValue);
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
-            cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
-
-            cardPresenters.add(cardPresenter);
-        	
-        } else if (id == 7) {
-            
-        	CardPresenter cardPresenter = new CardPresenter();
-            cardPresenter.setText("Show History").setFooter(codeValue);
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
-            cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
-
-            cardPresenters.add(cardPresenter);
-        	
-        } else {
-
-            CardPresenter cardPresenter = new CardPresenter();
-            //cardPresenter.setText("Show History").setFooter(codeValue);
-
-            //Intent intent = new Intent(Intent.ACTION_VIEW);
-            //intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
-            this.getContext().startActivity(browserIntent);
-
-            //cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
-
-            cardPresenters.add(cardPresenter);
-
-        }
-
-
-        
-
-        return cardPresenters;
+        return browserIntent;
     }
 
 }

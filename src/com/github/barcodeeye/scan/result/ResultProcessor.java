@@ -44,7 +44,7 @@ public abstract class ResultProcessor<T extends ParsedResult> {
         return mPhotoUri;
     }
 
-    public abstract List<CardPresenter> getCardResults();
+    public abstract Intent getCardResults();
 
     public static PendingIntent createPendingIntent(Context context,
             Intent intent) {
