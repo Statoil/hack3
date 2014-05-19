@@ -40,11 +40,6 @@ public class TextResultProcessor extends ResultProcessor<ParsedResult> {
         if (id == 5) {
         
         	CardPresenter cardPresenter = new CardPresenter();
-            cardPresenter.setText("Show Temp & Pressure").setFooter(codeValue);
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
-            cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
 
             cardPresenters.add(cardPresenter);
         	

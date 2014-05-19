@@ -29,6 +29,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.StrictMode;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.github.barcodeeye.R;
@@ -48,8 +49,8 @@ public final class ViewfinderView extends View {
 	
 	//private static final String GRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&chxl=0:%7CJan%7CFeb%7CMarch%7CApril%7CMay%7C1:%7CMin%7CMid%7CMax&cht=lc&chd=s:cEAELFJHHHKUju9uuXUc&chco=76A4FB&chls=2.0&chs=5&chf=c,s,000000|bg,s,000000&chs=470x270&&chco=ffffff";
 	private static final String GRAPH_URL = "http://lorempixel.com/470/270/";
-    private static final String DYNGRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&cht=bvs&chd=t:{1},{2},{3},{4},{5}&chco=76A4FB&chls=2.0&chs=200x125&chxl=0:|Jan|Feb|Mar|Apr|May";
-	
+    private static final String DYNGRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&cht=bvs&chd=t:{1},{2},{3},{4},{5}&chco=76A4FB&chls=2.0&chs=200x125&chxl=0:|Jan|Feb|Mar|Apr|May&chf=c,s,000000|bg,s,000000";
+    
     private static final int[] SCANNER_ALPHA = { 0, 64, 128, 192, 255, 192,
             128, 64 };
     private static final long ANIMATION_DELAY = 80L;
@@ -111,12 +112,14 @@ public final class ViewfinderView extends View {
         if (cameraManager == null) {
             return; // not ready yet, early draw before done configuring
         }
-        
-        if (this.processed) {
+        int test =(int)( (Math.random())*100);
+        //
+        String newUrl = DYNGRAPH_URL;
+        if (this.processed && count % 10 == 0) {
         	for (int i=0;i<5;i++) {
-            	DYNGRAPH_URL.replace("{" + (i+1) + "}", "" + ((int)Math.random())*100);
+            	newUrl = newUrl.replace("{" + (i+1) + "}", "" + (int)( (Math.random())*100));
         	}
-            resultBitmap = getBitmapFromURL(DYNGRAPH_URL);        	
+            resultBitmap = getBitmapFromURL(newUrl);        	
         }
 
         
@@ -139,7 +142,8 @@ public final class ViewfinderView extends View {
         canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1,
                 paint);
         canvas.drawRect(0, frame.bottom + 1, width, height, paint);
-
+        
+        count++;
         if (resultBitmap != null) {
   
             // Draw the opaque result bitmap over the scanning rectangle
@@ -194,9 +198,9 @@ public final class ViewfinderView extends View {
 
             // Request another update at the animation interval, but only repaint the laser line,
             // not the entire viewfinder mask.
-            postInvalidateDelayed(ANIMATION_DELAY, frame.left - POINT_SIZE,
-                    frame.top - POINT_SIZE, frame.right + POINT_SIZE,
-                    frame.bottom + POINT_SIZE);
+//            postInvalidateDelayed(ANIMATION_DELAY, frame.left - POINT_SIZE,
+//                    frame.top - POINT_SIZE, frame.right + POINT_SIZE,
+//                    frame.bottom + POINT_SIZE);
 
         }
         postInvalidateDelayed(ANIMATION_DELAY, frame.left ,
