@@ -13,15 +13,21 @@
 
 package com.github.barcodeeye.scan.ui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.StrictMode;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -39,7 +45,10 @@ import com.google.zxing.client.android.camera.CameraManager;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class ViewfinderView extends View {
-
+	
+	private static final String GRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&chxl=0:%7CJan%7CFeb%7CMarch%7CApril%7CMay%7C1:%7CMin%7CMid%7CMax&cht=lc&chd=s:cEAELFJHHHKUju9uuXUc&chco=76A4FB&chls=2.0&chs=5&chf=c,s,000000|bg,s,000000&chs=470x270&&chco=ffffff";
+	//private static final String GRAPH_URL = "http://lorempixel.com/470/270/";
+	
     private static final int[] SCANNER_ALPHA = { 0, 64, 128, 192, 255, 192,
             128, 64 };
     private static final long ANIMATION_DELAY = 80L;
@@ -57,6 +66,8 @@ public final class ViewfinderView extends View {
     private int scannerAlpha;
     private List<ResultPoint> possibleResultPoints;
     private List<ResultPoint> lastPossibleResultPoints;
+    
+    public boolean processed = false;
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -77,12 +88,33 @@ public final class ViewfinderView extends View {
     public void setCameraManager(CameraManager cameraManager) {
         this.cameraManager = cameraManager;
     }
-
+    public static Bitmap getBitmapFromURL(String src) {
+    	StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+    	StrictMode.setThreadPolicy(policy);
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @Override
     public void onDraw(Canvas canvas) {
         if (cameraManager == null) {
             return; // not ready yet, early draw before done configuring
         }
+        
+        if (this.processed) {
+            resultBitmap = getBitmapFromURL(GRAPH_URL);        	
+        }
+
+        
         Rect frame = cameraManager.getFramingRect();
         Rect previewFrame = cameraManager.getFramingRectInPreview();
         if (frame == null || previewFrame == null) {

@@ -14,6 +14,9 @@
 package com.github.barcodeeye.scan;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
@@ -22,12 +25,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -42,6 +47,7 @@ import com.github.barcodeeye.migrated.FinishListener;
 import com.github.barcodeeye.migrated.InactivityTimer;
 import com.github.barcodeeye.scan.result.ResultProcessor;
 import com.github.barcodeeye.scan.result.ResultProcessorFactory;
+import com.github.barcodeeye.scan.ui.ViewGraphView;
 import com.github.barcodeeye.scan.ui.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
@@ -62,7 +68,7 @@ import com.google.zxing.client.android.camera.CameraManager;
  */
 public final class CaptureActivity extends BaseGlassActivity implements
         SurfaceHolder.Callback {
-
+	private static final String GRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&chxl=0:%7CJan%7CFeb%7CMarch%7CApril%7CMay%7C1:%7CMin%7CMid%7CMax&cht=lc&chd=s:cEAELFJHHHKUju9uuXUc&chco=76A4FB&chls=2.0&chs=5&chf=c,s,000000|bg,s,000000&chs=470x270&&chco=ffffff";
     private static final String IMAGE_PREFIX = "BarcodeEye_";
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
@@ -77,12 +83,15 @@ public final class CaptureActivity extends BaseGlassActivity implements
     private CaptureActivityHandler mHandler;
     private Result mSavedResultToShow;
     private ViewfinderView mViewfinderView;
+  
     private boolean mHasSurface;
     private Map<DecodeHintType, ?> mDecodeHints;
     private InactivityTimer mInactivityTimer;
     private BeepManager mBeepManager;
     private AmbientLightManager mAmbientLightManager;
     private ImageManager mImageManager;
+    
+    private boolean postProcessing = false;
 
     public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, CaptureActivity.class);
@@ -236,9 +245,13 @@ public final class CaptureActivity extends BaseGlassActivity implements
             mBeepManager.playBeepSoundAndVibrate();
             drawResultPoints(barcode, scaleFactor, rawResult, getResources()
                     .getColor(R.color.result_points));
+            
+            mViewfinderView.processed = true;
+            
+            
         }
 
-        handleDecodeInternally(rawResult, barcode);
+        //handleDecodeInternally(rawResult, barcode);
     }
 
     /**
@@ -279,7 +292,30 @@ public final class CaptureActivity extends BaseGlassActivity implements
             }
         }
     }
+    private static void drawUrlImage(Bitmap barcode, float scaleFactor,  Result rawResult, int color) {
+        ResultPoint[] points = rawResult.getResultPoints();
 
+            Canvas canvas = new Canvas(barcode);
+            Paint paint = new Paint();
+            canvas.drawBitmap(getBitmapFromURL(GRAPH_URL), 0,0, paint);
+     
+    }
+    public static Bitmap getBitmapFromURL(String src) {
+    	StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+    	StrictMode.setThreadPolicy(policy);
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private static void drawLine(Canvas canvas, Paint paint, ResultPoint a,
             ResultPoint b, float scaleFactor) {
         if (a != null && b != null) {
@@ -300,11 +336,11 @@ public final class CaptureActivity extends BaseGlassActivity implements
             Log.e(TAG, "Failed to save image!", e);
         }
 
-        ResultProcessor<?> processor = ResultProcessorFactory
-                .makeResultProcessor(this, rawResult, imageUri);
-
-        startActivity(ResultsActivity.newIntent(this,
-                processor.getCardResults()));
+        ResultProcessor<?> processor = ResultProcessorFactory.makeResultProcessor(this, rawResult, imageUri);
+        
+        startActivity(GraphActivity.newIntent(this));
+        
+        //startActivity(ResultsActivity.newIntent(this, processor.getCardResults()));
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
