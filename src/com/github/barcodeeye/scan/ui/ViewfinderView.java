@@ -46,13 +46,13 @@ import com.google.zxing.client.android.camera.CameraManager;
  */
 public final class ViewfinderView extends View {
 	
-	private static final String GRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&chxl=0:%7CJan%7CFeb%7CMarch%7CApril%7CMay%7C1:%7CMin%7CMid%7CMax&cht=lc&chd=s:cEAELFJHHHKUju9uuXUc&chco=76A4FB&chls=2.0&chs=5&chf=c,s,000000|bg,s,000000&chs=470x270&&chco=ffffff";
-	//private static final String GRAPH_URL = "http://lorempixel.com/470/270/";
+	//private static final String GRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&chxl=0:%7CJan%7CFeb%7CMarch%7CApril%7CMay%7C1:%7CMin%7CMid%7CMax&cht=lc&chd=s:cEAELFJHHHKUju9uuXUc&chco=76A4FB&chls=2.0&chs=5&chf=c,s,000000|bg,s,000000&chs=470x270&&chco=ffffff";
+	private static final String GRAPH_URL = "http://lorempixel.com/470/270/";
 	
     private static final int[] SCANNER_ALPHA = { 0, 64, 128, 192, 255, 192,
             128, 64 };
     private static final long ANIMATION_DELAY = 80L;
-    private static final int CURRENT_POINT_OPACITY = 0xA0;
+    private static final int CURRENT_POINT_OPACITY = 160;
     private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
 
@@ -104,6 +104,7 @@ public final class ViewfinderView extends View {
             return null;
         }
     }
+    static int count = 0;
     @Override
     public void onDraw(Canvas canvas) {
         if (cameraManager == null) {
@@ -122,7 +123,11 @@ public final class ViewfinderView extends View {
         }
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-
+        count++;
+         
+        frame.top +=  count % 50;
+        
+        
         // Draw the exterior (i.e. outside the framing rect) darkened
         paint.setColor(resultBitmap != null ? resultColor : maskColor);
         canvas.drawRect(0, 0, width, frame.top, paint);
@@ -132,9 +137,11 @@ public final class ViewfinderView extends View {
         canvas.drawRect(0, frame.bottom + 1, width, height, paint);
 
         if (resultBitmap != null) {
+  
             // Draw the opaque result bitmap over the scanning rectangle
             paint.setAlpha(CURRENT_POINT_OPACITY);
             canvas.drawBitmap(resultBitmap, null, frame, paint);
+        
         } else {
 
             // Draw a red "laser scanner" line through the middle to show decoding is active
@@ -186,7 +193,11 @@ public final class ViewfinderView extends View {
             postInvalidateDelayed(ANIMATION_DELAY, frame.left - POINT_SIZE,
                     frame.top - POINT_SIZE, frame.right + POINT_SIZE,
                     frame.bottom + POINT_SIZE);
+
         }
+        postInvalidateDelayed(ANIMATION_DELAY, frame.left ,
+                frame.top , frame.right ,
+                frame.bottom );  
     }
 
     public void drawViewfinder() {
