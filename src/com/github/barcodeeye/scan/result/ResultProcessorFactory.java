@@ -21,26 +21,8 @@ public final class ResultProcessorFactory {
 
         ParsedResult parsedResult = ResultParser.parseResult(result);
 
-        switch (parsedResult.getType()) {
-            case PRODUCT:
-                return new ProductResultProcessor(context,
-                        (ProductParsedResult) parsedResult, result, photoUri);
-            case URI:
-                return new UriResultProcessor(context,
-                        (URIParsedResult) parsedResult, result, photoUri);
-            case ISBN:
-                return new IsbnResultProcessor(context,
-                        (ISBNParsedResult) parsedResult, result, photoUri);
-            case SMS:
-            case GEO:
-            case TEL:
-            case CALENDAR:
-            case ADDRESSBOOK:
-            case EMAIL_ADDRESS:
-            case WIFI:
-                // currently unsupported so we let them fall through
-            default:
+
                 return new TextResultProcessor(context, parsedResult, result, photoUri);
-        }
+        
     }
 }

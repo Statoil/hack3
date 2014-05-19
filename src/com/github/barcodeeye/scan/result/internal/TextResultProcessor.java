@@ -25,19 +25,41 @@ public class TextResultProcessor extends ResultProcessor<ParsedResult> {
 
     @Override
     public List<CardPresenter> getCardResults() {
+    	
+    	
         List<CardPresenter> cardPresenters = new ArrayList<CardPresenter>();
 
         ParsedResult parsedResult = getParsedResult();
+        
+        
         String codeValue = parsedResult.getDisplayResult();
 
-        CardPresenter cardPresenter = new CardPresenter();
-        cardPresenter.setText("Search Web").setFooter(codeValue);
+        int id = Integer.parseInt(codeValue);
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
-        cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
+        if (id == 5) {
+        
+        	CardPresenter cardPresenter = new CardPresenter();
+            cardPresenter.setText("Show Temp & Pressure").setFooter(codeValue);
 
-        cardPresenters.add(cardPresenter);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
+            cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
+
+            cardPresenters.add(cardPresenter);
+        	
+        } else if (id == 7) {
+            
+        	CardPresenter cardPresenter = new CardPresenter();
+            cardPresenter.setText("Show History").setFooter(codeValue);
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
+            cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
+
+            cardPresenters.add(cardPresenter);
+        	
+        }
+        
 
         return cardPresenters;
     }
