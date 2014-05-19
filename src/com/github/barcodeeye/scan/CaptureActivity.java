@@ -70,6 +70,8 @@ public final class CaptureActivity extends BaseGlassActivity implements
         SurfaceHolder.Callback {
 	private static final String GRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&chxl=0:%7CJan%7CFeb%7CMarch%7CApril%7CMay%7C1:%7CMin%7CMid%7CMax&cht=lc&chd=s:cEAELFJHHHKUju9uuXUc&chco=76A4FB&chls=2.0&chs=5&chf=c,s,000000|bg,s,000000&chs=470x270&&chco=ffffff";
     private static final String IMAGE_PREFIX = "BarcodeEye_";
+    
+    
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 

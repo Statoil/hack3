@@ -48,6 +48,7 @@ public final class ViewfinderView extends View {
 	
 	//private static final String GRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&chxl=0:%7CJan%7CFeb%7CMarch%7CApril%7CMay%7C1:%7CMin%7CMid%7CMax&cht=lc&chd=s:cEAELFJHHHKUju9uuXUc&chco=76A4FB&chls=2.0&chs=5&chf=c,s,000000|bg,s,000000&chs=470x270&&chco=ffffff";
 	private static final String GRAPH_URL = "http://lorempixel.com/470/270/";
+    private static final String DYNGRAPH_URL = "https://chart.googleapis.com/chart?chxt=x,y&cht=bvs&chd=t:{1},{2},{3},{4},{5}&chco=76A4FB&chls=2.0&chs=200x125&chxl=0:|Jan|Feb|Mar|Apr|May";
 	
     private static final int[] SCANNER_ALPHA = { 0, 64, 128, 192, 255, 192,
             128, 64 };
@@ -112,7 +113,10 @@ public final class ViewfinderView extends View {
         }
         
         if (this.processed) {
-            resultBitmap = getBitmapFromURL(GRAPH_URL);        	
+        	for (int i=0;i<5;i++) {
+            	DYNGRAPH_URL.replace("{" + (i+1) + "}", "" + ((int)Math.random())*100);
+        	}
+            resultBitmap = getBitmapFromURL(DYNGRAPH_URL);        	
         }
 
         
