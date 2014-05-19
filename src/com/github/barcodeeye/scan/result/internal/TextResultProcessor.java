@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.github.barcodeeye.R;
 import com.github.barcodeeye.scan.api.CardPresenter;
 import com.github.barcodeeye.scan.result.ResultProcessor;
 import com.google.zxing.Result;
@@ -58,7 +59,23 @@ public class TextResultProcessor extends ResultProcessor<ParsedResult> {
 
             cardPresenters.add(cardPresenter);
         	
+        } else {
+
+            CardPresenter cardPresenter = new CardPresenter();
+            //cardPresenter.setText("Show History").setFooter(codeValue);
+
+            //Intent intent = new Intent(Intent.ACTION_VIEW);
+            //intent.setData(Uri.parse(String.format(SEARCH_URL, codeValue)));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+            this.getContext().startActivity(browserIntent);
+
+            //cardPresenter.setPendingIntent(createPendingIntent(getContext(), intent));
+
+            cardPresenters.add(cardPresenter);
+
         }
+
+
         
 
         return cardPresenters;
