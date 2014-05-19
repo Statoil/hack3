@@ -27,7 +27,7 @@
 
             <meta-data
                 android:name="com.google.android.glass.VoiceTrigger"
-                android:resource="@xml/voice_trigger_scan" />
+                android:resource="@xml/voice_trigger_start" />
         </activity>
         <activity
             android:name="com.github.barcodeeye.scan.CaptureActivity"
