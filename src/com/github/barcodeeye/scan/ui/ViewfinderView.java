@@ -75,7 +75,6 @@ public final class ViewfinderView extends View {
     public boolean processed = false;
     public boolean showText = false;
     
-    private final Bitmap textImage;
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -92,7 +91,6 @@ public final class ViewfinderView extends View {
         possibleResultPoints = new ArrayList<ResultPoint>(5);
         lastPossibleResultPoints = null;
         
-        textImage = getBitmapFromURL("http://s17.postimg.org/4tsonhxnj/text.png");
     }
 
     public void setCameraManager(CameraManager cameraManager) {
@@ -123,25 +121,15 @@ public final class ViewfinderView extends View {
         int test =(int)( (Math.random())*100);
         //
         String newUrl = DYNGRAPH_URL;
+
         if (this.processed && count % 10 == 0) {
         	for (int i=0;i<5;i++) {
             	newUrl = newUrl.replace("{" + (i+1) + "}", "" + (int)( (Math.random())*100));
+
         	}
         	if (showText) {
-//        		Uri uri = Uri.parse(
-//                        "android.resource://drawable/text");
-        		
-//        		try {
-					//resultBitmap = 	MediaStore.Images.Media.getBitmap(  this.getContext().getContentResolver(), uri);
-					
-						resultBitmap = textImage;
-//				} catch (FileNotFoundException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+                Bitmap textImage = getBitmapFromURL("http://s17.postimg.org/4tsonhxnj/text.png");
+				resultBitmap = textImage;
         	} else {
         		resultBitmap = getBitmapFromURL(newUrl);
         	}
