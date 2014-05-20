@@ -249,7 +249,9 @@ public final class CaptureActivity extends BaseGlassActivity implements
                     .getColor(R.color.result_points));
             
             mViewfinderView.processed = true;
-            
+            Log.d("i fo", rawResult.getText());
+            mViewfinderView.showText = (rawResult.getText().equals("7"));
+
             
         }
 

@@ -13,6 +13,7 @@
 
 package com.github.barcodeeye.scan.ui;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -27,7 +28,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -70,6 +73,9 @@ public final class ViewfinderView extends View {
     private List<ResultPoint> lastPossibleResultPoints;
     
     public boolean processed = false;
+    public boolean showText = false;
+    
+    private final Bitmap textImage;
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -85,6 +91,8 @@ public final class ViewfinderView extends View {
         scannerAlpha = 0;
         possibleResultPoints = new ArrayList<ResultPoint>(5);
         lastPossibleResultPoints = null;
+        
+        textImage = getBitmapFromURL("http://s17.postimg.org/4tsonhxnj/text.png");
     }
 
     public void setCameraManager(CameraManager cameraManager) {
@@ -119,7 +127,25 @@ public final class ViewfinderView extends View {
         	for (int i=0;i<5;i++) {
             	newUrl = newUrl.replace("{" + (i+1) + "}", "" + (int)( (Math.random())*100));
         	}
-            resultBitmap = getBitmapFromURL(newUrl);        	
+        	if (showText) {
+//        		Uri uri = Uri.parse(
+//                        "android.resource://drawable/text");
+        		
+//        		try {
+					//resultBitmap = 	MediaStore.Images.Media.getBitmap(  this.getContext().getContentResolver(), uri);
+					
+						resultBitmap = textImage;
+//				} catch (FileNotFoundException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+        	} else {
+        		resultBitmap = getBitmapFromURL(newUrl);
+        	}
+                    	
         }
 
         
